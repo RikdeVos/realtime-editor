@@ -1,21 +1,17 @@
-### Template for websocket based application
+# Websocket based chat application
 
-Consists of nodejs server with socket.io.
+## Install and Run
 
-**Requirements:**
-- NodeJs version 10 or higher
-- npm or yarn
-
-**Run**
 - `npm install`
 - `npm start`
-- open localhost:3000, you should be able to see "Connected" messages in server and browser consoles
-- open more tabs or browsers to see them sending "Connected" messages to each other
+- open localhost:3000
 
-**Structure**
+## Completed functionality
 
-`server.js` - node http server with setup of socket.io and express
+- Editing code simultaneously by multiple clients
+- Seeing which users are online
+- Change your name
 
-`app.js` - file with socket handling logic
+## ToDo functionality
 
-`static/*` - directory with static files served by express
+- Make the carets work over multiple lines
