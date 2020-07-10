@@ -3,6 +3,8 @@ const http = require('http');
 const socketIo = require('socket.io');
 let idCounter = 0;
 let users = {};
+let editorCode =
+  'This is an editable paragraph.<br /><br />This is a second paragraph';
 // const { initSocketApp } = require('./app');
 
 const app = express();
@@ -35,7 +37,7 @@ function initSocketApp(io) {
 
     const timer = setInterval(() => {
       console.log('UPDATE', users);
-      socket.broadcast.emit('update', { users });
+      socket.broadcast.emit('update', { users, code: editorCode });
     }, 1000);
 
     socket.on('disconnect', () => {
@@ -48,8 +50,11 @@ function initSocketApp(io) {
       clearInterval(timer);
     });
 
-    socket.on('updateClient', (user) => {
+    socket.on('updateClient', ({ user, code }) => {
       userId = user.id;
+      if (code) {
+        editorCode = code;
+      }
       users[userId] = user;
       //   console.log('updateClient', user);
     });

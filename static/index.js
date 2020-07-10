@@ -7,6 +7,11 @@ class App {
     cursorIndex: 0,
   };
   users = {};
+  previousCode = null;
+
+  isTyping = false;
+  isTypingTimer;
+
   init() {
     this.editorEl = document.querySelector('.editor');
     this.updateNameBtnEl = document.querySelector('.update-name-btn');
@@ -22,27 +27,37 @@ class App {
       console.log('Connected');
     });
 
-    // this.socket.on('user-connected', ({ userId }) => {
-    //   console.log(`User connected, id: ${userId}`);
-    // });
-
-    // this.socket.on('user-disconnected', ({ userId }) => {
-    //   console.log(`User disconnected, id: ${userId}`);
-    // });
-
-    this.socket.on('update', (update) => {
-      this.users = update.users;
-      //   console.log('update', update);
+    this.socket.on('update', ({ users, code }) => {
+      if (this.hasCodeChanged()) {
+        return;
+      }
+      this.users = users;
+      if (code !== this.getCode()) {
+        this.setCode(code);
+      }
     });
 
     this.timer = setInterval(() => {
       this.update();
     }, 1000);
+
+    this.editorEl.addEventListener('keyup', () => this.editorKeyUp());
   }
 
+  /**
+   * Periodic update function
+   */
   update() {
-    console.log(Util.getCaretPosition(this.editorEl));
-    this.socket.emit('updateClient', this.user);
+    if (this.isTyping) {
+      return;
+    }
+    this.user.cursorIndex = Util.getCaretPosition(this.editorEl);
+    console.log(this.user.cursorIndex);
+    this.socket.emit('updateClient', {
+      user: this.user,
+      code: this.hasCodeChanged() ? this.getCode() : null,
+    });
+    this.previousCode = this.getCode();
 
     this.updateUsersList();
   }
@@ -58,17 +73,62 @@ class App {
       .join(', ');
   }
 
+  /**
+   * Update page title with the user's name
+   */
   updateTitle() {
     this.titleEl.innerHTML = 'Hello, ' + this.user.name;
   }
 
   /**
-   * When the update name btn is pressed
+   * Get the code from the editor
+   */
+  getCode() {
+    return this.editorEl.innerHTML;
+  }
+
+  /**
+   * Update the code in the editor
+   * @param {String} code Code to update
+   */
+  setCode(code) {
+    return (this.editorEl.innerHTML = code);
+  }
+
+  /**
+   * Determine if the code in the editor has been changed by the user
+   */
+  hasCodeChanged() {
+    if (!this.previousCode) {
+      return false;
+    }
+    if (this.previousCode === this.getCode()) {
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Update name btn is pressed
    */
   updateNameBtn() {
     const newName = prompt('Enter your name');
     this.user.name = newName;
     this.updateTitle();
+  }
+
+  /**
+   * Set isTyping to true, and back to false after 1200ms
+   */
+  editorKeyUp() {
+    this.isTyping = true;
+    if (this.isTypingTimer) {
+      clearTimeout(this.isTypingTimer);
+    }
+    this.isTypingTimer = setTimeout(() => {
+      this.isTyping = false;
+      clearTimeout(this.isTypingTimer);
+    }, 300);
   }
 }
 
