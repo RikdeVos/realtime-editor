@@ -17,6 +17,7 @@ class App {
     this.updateNameBtnEl = document.querySelector('.update-name-btn');
     this.usersEl = document.querySelector('.users');
     this.titleEl = document.querySelector('.title');
+    this.caretsEl = document.querySelector('.editor-carets');
 
     this.updateTitle();
     this.updateNameBtnEl.addEventListener('click', () => this.updateNameBtn());
@@ -45,7 +46,7 @@ class App {
   }
 
   /**
-   * Periodic update function
+   * Periodic update function to update code and users from server
    */
   update() {
     if (this.isTyping) {
@@ -62,15 +63,35 @@ class App {
     this.updateUsersList();
   }
 
+  /**
+   * Update the users on the page
+   */
   updateUsersList() {
     let users = [];
     for (const i in this.users) {
       users.push(this.users[i]);
     }
-    this.usersEl.innerHTML = users
-      .filter((user) => user.id !== this.user.id)
-      .map((user) => user.name)
-      .join(', ');
+    const usersExceptMe = users.filter((user) => user.id !== this.user.id);
+
+    // Update list below users
+    this.usersEl.innerHTML = usersExceptMe.map((user) => user.name).join(', ');
+
+    // Update carets
+    const caretHTML = usersExceptMe
+      .map((user) => {
+        return (
+          '<div class="editor-caret" style="left: ' +
+          user.cursorIndex * 9.6 +
+          'px">' +
+          user.name +
+          '</div>'
+        );
+      })
+      .join('');
+    if (this.caretsEl.innerHTML !== caretHTML) {
+      console.log('update caret', caretHTML);
+      this.caretsEl.innerHTML = caretHTML;
+    }
   }
 
   /**
