@@ -3,8 +3,7 @@ const http = require('http');
 const socketIo = require('socket.io');
 let idCounter = 0;
 let users = {};
-let editorCode =
-  'This is an editable paragraph.<br /><br />This is a second paragraph';
+let editorCode = 'This is an editable paragraph.';
 // const { initSocketApp } = require('./app');
 
 const app = express();
