@@ -1,5 +1,16 @@
 import Util from './util.js';
 
+const COLORS = [
+  '#2ecc71',
+  '#3498db',
+  '#9b59b6',
+  '#34495e',
+  '#f1c40f',
+  '#e67e22',
+  '#e74c3c',
+  '#7f8c8d',
+];
+
 class App {
   user = {
     name: 'Unnamed User',
@@ -79,10 +90,13 @@ class App {
     // Update carets
     const caretHTML = usersExceptMe
       .map((user) => {
+        const backgroundColor = COLORS[user.id % COLORS.length];
         return (
           '<div class="editor-caret" style="left: ' +
           user.cursorIndex * 9.6 +
-          'px">' +
+          'px; background-color: ' +
+          backgroundColor +
+          '">' +
           user.name +
           '</div>'
         );
