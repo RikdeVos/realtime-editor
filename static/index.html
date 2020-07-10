@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Title</title>
+    <link rel="stylesheet" href="/index.css" />
+  </head>
+  <body>
+    <h1 class="title">Hello</h1>
+
+    <button class="update-name-btn">Update Name</button>
+
+    <div class="editor" contenteditable="true">
+      This is an editable paragraph.<br /><br />This is a second paragraph
+    </div>
+
+    <div class="users">
+      users here
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/index.js" type="module"></script>
+    <script type="module">
+      import App from './index.js';
+      const app = new App();
+      app.init();
+    </script>
+  </body>
+</html>
